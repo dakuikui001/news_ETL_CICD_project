@@ -1,0 +1,11 @@
+v1
+{"path":"file:///Users/luhui/Documents/github/08_straitstimes_news_ELT/data/news_2026-01-06_15-31-49.csv","timestamp":1767684709379,"batchId":0}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-06_11-28-45.csv","timestamp":1767698926000,"batchId":1}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-06_11-37-08.csv","timestamp":1767699428929,"batchId":2}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-06_22-03-39.csv","timestamp":1767737019560,"batchId":3}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-06_22-43-28.csv","timestamp":1767739408906,"batchId":4}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-07_04-51-24.csv","timestamp":1767761484939,"batchId":5}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-07_22-52-21.csv","timestamp":1767826341554,"batchId":6}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-08_08-04-19.csv","timestamp":1767859459991,"batchId":7}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-08_22-03-47.csv","timestamp":1767909827714,"batchId":8}
+{"path":"file:///usr/local/airflow/include/data/news_2026-01-09_22-49-01.csv","timestamp":1767998941105,"batchId":9}

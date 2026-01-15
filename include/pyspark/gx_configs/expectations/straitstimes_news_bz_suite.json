@@ -1,0 +1,68 @@
+{
+  "expectations": [
+    {
+      "id": "57a23583-e040-439f-a3ac-1407ca7518c9",
+      "kwargs": {
+        "column_set": [
+          "title",
+          "publish_date",
+          "update_date",
+          "img_url",
+          "caption_text",
+          "tags_list",
+          "full_article",
+          "url",
+          "load_time",
+          "_dq_batch_id"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_table_columns_to_match_set"
+    },
+    {
+      "id": "ae60ff52-13dd-47d4-84ec-43460a00138e",
+      "kwargs": {
+        "column": "title"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "607c7d53-a66e-4aed-aa93-377ceaaf4765",
+      "kwargs": {
+        "column": "url"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "2e54427d-c045-4668-afb3-8045eff69eb1",
+      "kwargs": {
+        "column": "publish_date",
+        "strftime_format": "%b %d, %Y, %I:%M %p"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_match_strftime_format"
+    },
+    {
+      "id": "2e890c1e-9fd1-4d8a-bc1a-35f013916639",
+      "kwargs": {
+        "column": "update_date",
+        "strftime_format": "%b %d, %Y, %I:%M %p"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_match_strftime_format"
+    }
+  ],
+  "id": "ccf8576a-1d1c-49a4-b9f0-ead6efa8efef",
+  "meta": {
+    "great_expectations_version": "1.10.0"
+  },
+  "name": "straitstimes_news_bz_suite",
+  "notes": null
+}

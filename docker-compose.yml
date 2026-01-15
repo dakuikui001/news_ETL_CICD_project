@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  astro-app:
+    #build: .
+    image: huilu/astro-project:latest
+    container_name: airflow-01-news-project
+    environment:
+      # 告诉 Python 代码去连公共网络里的 ClickHouse 服务名
+      - CLICKHOUSE_HOST=clickhouse-server 
+      - CLICKHOUSE_PORT=8123
+    networks:
+      - shared-clickhouse-network
+    # 如果是 Airflow/Astro 运行，通常需要挂载 dags 目录（仅限本地开发，CI部署通常直接打入镜像）
+    # volumes:
+    #   - ./dags:/usr/local/airflow/dags
+
+networks:
+  shared-clickhouse-network:
+    external: true 

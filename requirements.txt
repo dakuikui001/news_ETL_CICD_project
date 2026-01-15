@@ -1,0 +1,20 @@
+# 基础爬虫与请求
+requests
+beautifulsoup4
+selenium
+tqdm
+
+# 数据处理与 Spark
+pyspark==3.5.0  # 建议指定与你本地一致的版本
+clickhouse-connect
+clickhouse-driver
+
+# 数据校验
+great_expectations==1.10.0
+
+# 其他工具
+# 如果你需要运行 .ipynb 文件，请取消下方注释
+papermill
+ipykernel
+jupyter
+pendulum
