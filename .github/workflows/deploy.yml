@@ -28,8 +28,12 @@ jobs:
         with:
           context: .
           push: true
+          # 保持多架构支持（为了你的 Mac ARM64 和可能的云端 AMD64）
           platforms: linux/amd64,linux/arm64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/astro-project:latest
+          # 【优化 1】：启用 GitHub Actions 缓存，显著缩短后续部署的构建时间
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
     needs: build-and-push
@@ -47,9 +51,10 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # 环境变量路径
             export PATH="/usr/local/bin:$PATH"
             
-            # 1. 进入目录并同步最新的配置
+            # 1. 同步最新代码（确保 docker-compose.yml 的启动脚本是最新的）
             cd /Users/luhui/Documents/github/airflow-01-news-project
             git pull origin main
             
@@ -57,10 +62,14 @@ jobs:
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/astro-project:latest
             
-            # 3. 强制根据最新的 docker-compose.yml 重启
-            # --remove-orphans 会清理掉不在配置文件里的旧容器
+            # 3. 根据最新配置启动容器
             docker compose up -d --remove-orphans
             
-            # 4. 深度清理垃圾
-            # prune -f 清理虚悬镜像
+            # 【优化 2】：自动执行权限同步，彻底解决 "No Roles" 报错
+            # 等待 15 秒确保数据库完成初始化后再执行同步
+            echo "Waiting for Airflow database to stabilize..."
+            sleep 15
+            docker exec airflow-01-news-project airflow sync-perm
+            
+            # 4. 自动清理本地虚悬镜像（只保留当前运行的镜像）
             docker image prune -f
