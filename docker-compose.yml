@@ -2,19 +2,28 @@ version: '3.8'
 
 services:
   astro-app:
-    #build: .
     image: huilu/astro-project:latest
     container_name: airflow-01-news-project
+    # 强制手动按顺序执行，每一行都加了 || true 确保不会因为“已存在”而中断
+    command: >
+      bash -c "
+      airflow db migrate &&
+      airflow roles create Admin || true &&
+      airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com || true &&
+      (airflow webserver & airflow scheduler)
+      "
     environment:
-      # 告诉 Python 代码去连公共网络里的 ClickHouse 服务名
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - CLICKHOUSE_HOST=clickhouse-server 
       - CLICKHOUSE_PORT=8123
+      # 显式禁用一些可能冲突的 Astro 插件
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=sqlite:////usr/local/airflow/airflow.db
+    ports:
+      - "8080:8080"
     networks:
       - shared-clickhouse-network
-    # 如果是 Airflow/Astro 运行，通常需要挂载 dags 目录（仅限本地开发，CI部署通常直接打入镜像）
-    # volumes:
-    #   - ./dags:/usr/local/airflow/dags
+    restart: always
 
 networks:
   shared-clickhouse-network:
-    external: true 
+    external: true

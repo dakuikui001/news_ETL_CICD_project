@@ -11,7 +11,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 增加：支持多架构构建的准备工作
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       
@@ -29,7 +28,6 @@ jobs:
         with:
           context: .
           push: true
-          # 关键：同时构建 amd64(云端常用) 和 arm64(你的 Mac 专用) 镜像
           platforms: linux/amd64,linux/arm64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/astro-project:latest
 
@@ -37,34 +35,32 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      # 1. 连接 Tailscale 私有网络
       - name: Tailscale
         uses: tailscale/github-action@v2
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
-      # 2. 远程 SSH 部署
       - name: SSH Remote Deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SERVER_HOST }}     # Secret: 100.97.244.35
-          username: ${{ secrets.SERVER_USER }} # Secret: luhui
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # 解决 SSH 环境找不到 Docker 路径的问题
             export PATH="/usr/local/bin:$PATH"
             
-            # 进入 Mac 上的项目目录
+            # 1. 进入目录并同步最新的配置
             cd /Users/luhui/Documents/github/airflow-01-news-project
+            git pull origin main
             
-            # 登录 Docker Hub (使用 Secret 替换)
+            # 2. 登录并更新镜像
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-            
-            # 拉取最新的多架构镜像
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/astro-project:latest
             
-            # 重新启动容器
+            # 3. 强制根据最新的 docker-compose.yml 重启
+            # --remove-orphans 会清理掉不在配置文件里的旧容器
             docker compose up -d --remove-orphans
             
-            # 清理旧的无用镜像，节省 Mac 空间
+            # 4. 深度清理垃圾
+            # prune -f 清理虚悬镜像
             docker image prune -f
